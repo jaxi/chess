@@ -209,6 +209,29 @@ func (k Knight) PieceKind() PieceKind { return KNIGHT }
 
 // Move like a Knight
 func (k Knight) Move(b *Board, pos1, pos2 Position) bool {
+	for i := -1; i <= 1; i++ {
+		for j := -1; j <= 1; j++ {
+			if i == 0 && j == 0 {
+				continue
+			}
+			for t := 0; t <= 1; t++ {
+				dirs := []int{i, j}
+				dirs[t] *= 2
+
+				x, y := pos1.x+dirs[0], pos1.y+dirs[1]
+				if pos2.Equal(Position{x, y}) {
+					p2 := b.squares[pos2.x][pos2.y]
+
+					if p2.Side() == k.Side() {
+						return false
+					}
+					b.squares[pos2.x][pos2.y] = b.squares[pos1.x][pos1.y]
+					b.squares[pos1.x][pos1.y] = EmptySquare{}
+					return true
+				}
+			}
+		}
+	}
 	return false
 }
 

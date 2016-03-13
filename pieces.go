@@ -1,4 +1,4 @@
-package main
+package chess
 
 // PieceKind is the type representing for the pieces on the board
 type PieceKind int

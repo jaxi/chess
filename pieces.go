@@ -100,8 +100,6 @@ func (p Pawn) PieceKind() PieceKind { return PAWN }
 
 // Move like a Pawn
 func (p Pawn) Move(b *Board, pos1, pos2 Position) bool {
-	s1 := b.squares[pos1.x][pos2.y]
-
 	// Allowed move count
 	amc := 1
 	if p.moved == false {
@@ -119,9 +117,9 @@ func (p Pawn) Move(b *Board, pos1, pos2 Position) bool {
 			break
 		}
 
-		if pos2.Equal(Position{pos1.x + dx, pos2.y}) {
+		if pos2.Equal(Position{pos1.x + dx, pos1.y}) {
 			s2 := b.squares[pos2.x][pos2.y]
-			if s1.Side() == s2.Side() {
+			if p.Side() == s2.Side() {
 				return false
 			}
 			b.squares[pos2.x][pos2.y] = b.squares[pos1.x][pos1.y]
@@ -134,19 +132,20 @@ func (p Pawn) Move(b *Board, pos1, pos2 Position) bool {
 
 	ds := [][]int{{1, 1}, {1, -1}}
 	for _, d := range ds {
-		x, y := pos1.x+d[0], pos1.y+d[1]
+		x, y := pos1.x+d[0]*dir, pos1.y+d[1]*dir
 		if !(Position{x, y}).IsValid() {
 			break
 		}
 
 		if pos2.Equal(Position{x, y}) {
 			s2 := b.squares[pos2.x][pos2.y]
-			if s1.Side() == s2.Side() {
-				return false
+			if s2.Side() == p.Side()%2+1 {
+
+				b.squares[pos2.x][pos2.y] = b.squares[pos1.x][pos1.y]
+				b.squares[pos1.x][pos1.y] = EmptySquare{}
+				return true
 			}
-			b.squares[pos2.x][pos2.y] = b.squares[pos1.x][pos1.y]
-			b.squares[pos1.x][pos1.y] = EmptySquare{}
-			return true
+			return false
 		}
 	}
 	return false

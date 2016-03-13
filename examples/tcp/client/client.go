@@ -1,24 +1,36 @@
 package main
 
-import "net"
+import (
+	"io"
+	"net"
+)
 
 import "fmt"
-import "bufio"
+
+func streamingOutput(conn net.Conn) {
+	tmp := make([]byte, 256)
+	for {
+		n, err := conn.Read(tmp)
+		if err != nil {
+			if err != io.EOF {
+				fmt.Println("read error:", err)
+			}
+			break
+		}
+		fmt.Printf(string(tmp[:n]))
+	}
+}
 
 func main() {
 	conn, _ := net.Dial("tcp", "127.0.0.1:8081")
 
-	message, _ := bufio.NewReader(conn).ReadString('@')
-	fmt.Println(message[:len(message)-1])
+	go streamingOutput(conn)
 
 	for {
 		var i, j, k, l int
 		fmt.Scanf("%d %c %d %c\n", &i, &j, &k, &l)
-		fmt.Print("Text to send: ")
+		fmt.Printf("\n")
 
 		fmt.Fprintf(conn, "%d %c %d %c\n", i, j, k, l)
-
-		message, _ := bufio.NewReader(conn).ReadString('@')
-		fmt.Println(message[:len(message)-1])
 	}
 }

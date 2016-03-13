@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"io"
 	"net"
+	"os"
 )
 
 import "fmt"
@@ -27,10 +29,9 @@ func main() {
 	go streamingOutput(conn)
 
 	for {
-		var i, j, k, l int
-		fmt.Scanf("%d %c %d %c\n", &i, &j, &k, &l)
-		fmt.Printf("\n")
+		reader := bufio.NewReader(os.Stdin)
+		text, _ := reader.ReadString('\n')
 
-		fmt.Fprintf(conn, "%d %c %d %c\n", i, j, k, l)
+		fmt.Fprintf(conn, string(text))
 	}
 }

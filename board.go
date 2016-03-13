@@ -3,6 +3,8 @@ package chess
 import (
 	"bytes"
 	"fmt"
+	"io"
+	"os"
 	"strconv"
 )
 
@@ -138,11 +140,25 @@ func (b *Board) Looping() {
 	}
 }
 
+// Move - The Movement in one turn
+type Move struct {
+	pos1 Position
+	pos2 Position
+}
+
+// NewMove create a new Move struct
+func NewMove(i, j, k, l int) Move {
+	return Move{
+		Position{i, j},
+		Position{k, l},
+	}
+}
+
 // Callback is the standard protocol can connect to the game
 type Callback interface {
 	ShowTurn(b *Board)
 	RenderBoard(b *Board)
-	FetchMove() (int, int, int, int)
+	FetchMove() (Move, error)
 	ErrorMessage(b *Board)
 }
 
@@ -151,10 +167,24 @@ func (b *Board) AdvanceLooping(c Callback) {
 	c.RenderBoard(b)
 
 	for {
-		c.ShowTurn(b)
-		i, j, k, l := c.FetchMove()
+		var move Move
+		var err error
 
-		if b.Move(Position{i - 1, j - 'a'}, Position{k - 1, l - 'a'}) {
+		for {
+			c.ShowTurn(b)
+			move, err = c.FetchMove()
+			if err != nil {
+				if err == io.EOF {
+					os.Exit(0)
+				}
+				fmt.Println("read error:", err)
+				c.ErrorMessage(b)
+			} else {
+				break
+			}
+		}
+
+		if b.Move(move.pos1, move.pos2) {
 			b.turn = b.turn%2 + 1
 			c.RenderBoard(b)
 		} else {

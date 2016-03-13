@@ -12,6 +12,11 @@ type Board struct {
 	turn    Side
 }
 
+// Turn shows which side is playing now
+func (b *Board) Turn() Side {
+	return b.turn
+}
+
 // NewBoard creates a new board that has pieces been placed
 func NewBoard() *Board {
 	sq := make([][]Square, 8)
@@ -129,6 +134,31 @@ func (b *Board) Looping() {
 			fmt.Println(b)
 		} else {
 			fmt.Println("The move is not quite right, please try again.")
+		}
+	}
+}
+
+// Callback is the standard protocol can connect to the game
+type Callback interface {
+	ShowTurn(b *Board)
+	RenderBoard(b *Board)
+	FetchMove() (int, int, int, int)
+	ErrorMessage(b *Board)
+}
+
+// AdvanceLooping loop the gamve with more options
+func (b *Board) AdvanceLooping(c Callback) {
+	c.RenderBoard(b)
+
+	for {
+		c.ShowTurn(b)
+		i, j, k, l := c.FetchMove()
+
+		if b.Move(Position{i - 1, j - 'a'}, Position{k - 1, l - 'a'}) {
+			b.turn = b.turn%2 + 1
+			c.RenderBoard(b)
+		} else {
+			c.ErrorMessage(b)
 		}
 	}
 }

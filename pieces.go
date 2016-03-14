@@ -327,18 +327,63 @@ func (k King) PieceKind() PieceKind { return KING }
 
 // Move in the King's way
 func (k King) Move(b *Board, pos1, pos2 Position) bool {
-	s1 := b.squares[pos1.x][pos2.y]
+	for i := -1; i <= 1; i++ {
+		for j := -1; j <= 1; j++ {
+			if i == 0 && j == 0 || !pos2.Equal(Position{pos1.x + i, pos1.y + j}) {
+				continue
+			}
 
-	diff := (pos1.x - pos2.x) * (pos1.x - pos2.x)
-	if diff >= -1 && diff <= 1 && !pos1.Equal(pos2) {
-		s2 := b.squares[pos2.x][pos2.y]
-		if s1.Side() == s2.Side() {
+			s2 := b.squares[pos2.x][pos2.y]
+			if k.Side() == s2.Side() {
+				return false
+			}
+			b.squares[pos2.x][pos2.y] = b.squares[pos1.x][pos1.y]
+			b.squares[pos1.x][pos1.y] = EmptySquare{}
+			movedKing := b.squares[pos2.x][pos2.y].(King)
+			movedKing.moved = true
+			return true
+		}
+	}
+
+	if k.castling(b, pos1, pos2) {
+		return true
+	}
+
+	return false
+}
+
+func (k King) castling(b *Board, pos1, pos2 Position) bool {
+	s2 := b.squares[pos2.x][pos2.y]
+
+	if s2.Side() != k.Side() || s2.PieceKind() != ROOK {
+		return false
+	}
+
+	if k.moved == false && s2.(Rook).moved == false {
+		var vec int
+		if pos1.y-pos2.y > 0 {
+			vec = 1
+		} else {
+			vec = -1
+		}
+		nrp := Position{pos2.x, pos2.y + vec*2}
+		nkp := Position{pos2.x, pos2.y + vec}
+
+		if b.squares[nrp.x][nrp.y].PieceKind() != EMPTY_SQUARE ||
+			b.squares[nkp.x][nkp.y].PieceKind() != EMPTY_SQUARE {
 			return false
 		}
-		b.squares[pos2.x][pos2.y] = b.squares[pos1.x][pos1.y]
+
+		b.squares[nkp.x][nkp.y] = b.squares[pos1.x][pos1.y]
 		b.squares[pos1.x][pos1.y] = EmptySquare{}
-		movedKing := b.squares[pos2.x][pos2.y].(King)
+		movedKing := b.squares[nkp.x][nkp.y].(King)
 		movedKing.moved = true
+
+		b.squares[nrp.x][nrp.y] = b.squares[pos2.x][pos2.y]
+		b.squares[pos2.x][pos2.y] = EmptySquare{}
+		movedRook := b.squares[nrp.x][nrp.y].(Rook)
+		movedRook.moved = true
+
 		return true
 	}
 	return false

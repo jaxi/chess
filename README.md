@@ -18,7 +18,7 @@ func main() {
 }
 ```
 
-And then run the code above and it pretty much looks like this (let me know if it doesn't)
+And then run the code above and it pretty much looks like this.
 
 ```
 ➜  examples git:(master) go run main.go
@@ -42,3 +42,5 @@ And then run the code above and it pretty much looks like this (let me know if i
    +---+---+---+---+---+---+---+---+
      a   b   c   d   e   f   g   h
 ```
+
+Move examples that use configurable interface in the examples folder. You can even play the game remotely!

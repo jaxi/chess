@@ -19,8 +19,8 @@ func (b *Board) Turn() Side {
 	return b.turn
 }
 
-// NewBoard creates a new board that has pieces been placed
-func NewBoard() *Board {
+// EmptyBoard returns an board with no pieces
+func EmptyBoard() *Board {
 	sq := make([][]Square, 8)
 
 	for i := 0; i < 8; i++ {
@@ -30,9 +30,19 @@ func NewBoard() *Board {
 		}
 	}
 
+	return &Board{
+		squares: sq,
+		turn:    WHITE,
+	}
+}
+
+// NewBoard creates a new board that has pieces been placed
+func NewBoard() *Board {
+	b := EmptyBoard()
+
 	for i := 0; i < 8; i++ {
-		sq[1][i] = Pawn{Piece{PAWN, WHITE}, &Movable{}}
-		sq[6][i] = Pawn{Piece{PAWN, BLACK}, &Movable{}}
+		b.squares[1][i] = Pawn{Piece{PAWN, WHITE}, &Movable{}}
+		b.squares[6][i] = Pawn{Piece{PAWN, BLACK}, &Movable{}}
 	}
 
 	for _, v := range []Side{WHITE, BLACK} {
@@ -42,20 +52,17 @@ func NewBoard() *Board {
 		} else {
 			i = 7
 		}
-		sq[i][0] = Rook{Piece{ROOK, v}, &Movable{}}
-		sq[i][1] = Knight{Piece{KNIGHT, v}}
-		sq[i][2] = Bishop{Piece{BISHOP, v}}
-		sq[i][3] = Queen{Piece{QUEEN, v}}
-		sq[i][4] = King{Piece{KING, v}, &Movable{}}
-		sq[i][5] = Bishop{Piece{BISHOP, v}}
-		sq[i][6] = Knight{Piece{KNIGHT, v}}
-		sq[i][7] = Rook{Piece{ROOK, v}, &Movable{}}
+		b.squares[i][0] = Rook{Piece{ROOK, v}, &Movable{}}
+		b.squares[i][1] = Knight{Piece{KNIGHT, v}}
+		b.squares[i][2] = Bishop{Piece{BISHOP, v}}
+		b.squares[i][3] = Queen{Piece{QUEEN, v}}
+		b.squares[i][4] = King{Piece{KING, v}, &Movable{}}
+		b.squares[i][5] = Bishop{Piece{BISHOP, v}}
+		b.squares[i][6] = Knight{Piece{KNIGHT, v}}
+		b.squares[i][7] = Rook{Piece{ROOK, v}, &Movable{}}
 	}
 
-	return &Board{
-		squares: sq,
-		turn:    WHITE,
-	}
+	return b
 }
 
 func printBar() string {

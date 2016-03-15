@@ -90,9 +90,9 @@ type Pawn struct {
 
 func (p Pawn) String() string {
 	if p.sd == WHITE {
-		return " ♙ "
+		return "♙"
 	}
-	return " ♟ "
+	return "♟"
 }
 
 // PieceKind of Pawn
@@ -159,9 +159,9 @@ type Rook struct {
 
 func (r Rook) String() string {
 	if r.sd == WHITE {
-		return " ♖ "
+		return "♖"
 	}
-	return " ♜ "
+	return "♜"
 }
 
 // PieceKind of Rook
@@ -198,9 +198,9 @@ type Knight struct {
 
 func (k Knight) String() string {
 	if k.sd == WHITE {
-		return " ♘ "
+		return "♘"
 	}
-	return " ♞ "
+	return "♞"
 }
 
 // PieceKind of Knight
@@ -241,9 +241,9 @@ type Bishop struct {
 
 func (b Bishop) String() string {
 	if b.sd == WHITE {
-		return " ♗ "
+		return "♗"
 	}
-	return " ♝ "
+	return "♝"
 }
 
 // PieceKind of Bishop
@@ -277,9 +277,9 @@ type Queen struct {
 
 func (q Queen) String() string {
 	if q.sd == WHITE {
-		return " ♕ "
+		return "♕"
 	}
-	return " ♛ "
+	return "♛"
 }
 
 // PieceKind of Queen
@@ -317,9 +317,9 @@ type King struct {
 
 func (k King) String() string {
 	if k.sd == WHITE {
-		return " ♔ "
+		return "♔"
 	}
-	return " ♚ "
+	return "♚"
 }
 
 // PieceKind of KING

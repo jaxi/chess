@@ -63,7 +63,7 @@ type Piece struct {
 }
 
 func (p Piece) String() string {
-	return "   "
+	return " "
 }
 
 // Side returns the side of the piece

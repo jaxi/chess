@@ -88,9 +88,8 @@ func printNum() string {
 	return nbf.String()
 }
 
-// String - aka. turn the board into a string
-func (b *Board) String() string {
-
+// TerminalString is a specific string returns for terminal
+func (b *Board) TerminalString() string {
 	var bf bytes.Buffer
 	bar := printBar()
 	numBar := printNum()
@@ -100,7 +99,33 @@ func (b *Board) String() string {
 		bf.WriteString(bar)
 		bf.WriteString(" " + strconv.Itoa(i+1) + " ")
 		for j := 0; j < 8; j++ {
-			bf.WriteString("|" + b.squares[i][j].String())
+			s := b.squares[i][j].String()
+			if s == " " {
+				s = "   "
+			}
+			bf.WriteString("|" + s)
+		}
+		bf.WriteString("| " + strconv.Itoa(i+1) + " ")
+		bf.WriteString("\n")
+	}
+	bf.WriteString(bar)
+	bf.WriteString(numBar)
+
+	return bf.String()
+}
+
+// String - aka. turn the board into a string
+func (b *Board) String() string {
+	var bf bytes.Buffer
+	bar := printBar()
+	numBar := printNum()
+
+	bf.WriteString(numBar)
+	for i := 7; i >= 0; i-- {
+		bf.WriteString(bar)
+		bf.WriteString(" " + strconv.Itoa(i+1) + " ")
+		for j := 0; j < 8; j++ {
+			bf.WriteString("| " + b.squares[i][j].String() + " ")
 		}
 		bf.WriteString("| " + strconv.Itoa(i+1) + " ")
 		bf.WriteString("\n")

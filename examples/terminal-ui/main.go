@@ -12,7 +12,7 @@ func redrawAll(board *chess.Board) {
 	termbox.Clear(coldef, coldef)
 	w, h := termbox.Size()
 
-	lines := strings.Split(board.String(), "\n")
+	lines := strings.Split(board.TerminalString(), "\n")
 
 	bh := len(lines)
 	bw := len(lines[0])

@@ -7,12 +7,19 @@ import (
 	"github.com/nsf/termbox-go"
 )
 
-func redrawAll(board *chess.Board) {
+type terminalUICallback struct {
+}
+
+func (tuc terminalUICallback) ShowTurn(b *chess.Board) {
+
+}
+
+func (tuc terminalUICallback) RenderBoard(b *chess.Board) {
 	const coldef = termbox.ColorDefault
 	termbox.Clear(coldef, coldef)
 	w, h := termbox.Size()
 
-	lines := strings.Split(board.TerminalString(), "\n")
+	lines := strings.Split(b.TerminalString(), "\n")
 
 	bh := len(lines)
 	bw := len(lines[0])
@@ -28,6 +35,14 @@ func redrawAll(board *chess.Board) {
 	termbox.Flush()
 }
 
+func (tuc terminalUICallback) FetchMove() (chess.Move, error) {
+	return chess.Move{}, nil
+}
+
+func (tuc terminalUICallback) ErrorMessage(b *chess.Board) {
+
+}
+
 func main() {
 	board := chess.NewBoard()
 
@@ -38,7 +53,11 @@ func main() {
 	defer termbox.Close()
 	termbox.SetInputMode(termbox.InputEsc)
 
-	redrawAll(board)
+	go func() {
+		board.AdvanceLooping(terminalUICallback{})
+	}()
+
+	// redrawAll(board)
 
 mainloop:
 	for {
@@ -47,10 +66,12 @@ mainloop:
 			switch ev.Key {
 			case termbox.KeyEsc:
 				break mainloop
+			case 'q':
+				break mainloop
 			}
 		case termbox.EventError:
 			panic(ev.Err)
 		}
-		redrawAll(board)
+		// redrawAll(board)
 	}
 }

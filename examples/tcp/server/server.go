@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"io"
 	"net"
@@ -35,38 +36,27 @@ func (tc TCPCallback) RenderBoard(b *chess.Board) {
 
 // FetchMove returns the move from your STDIN
 func (tc TCPCallback) FetchMove() (chess.Move, error) {
-	nums := make([]int, 4)
-	var err error
-	text, err := bufio.NewReader(tc.conn).ReadString('\n')
-
-	if err != nil {
-		return chess.Move{}, err
-	}
-
-	scanner := bufio.NewScanner(strings.NewReader(text))
+	scanner := bufio.NewScanner(tc.conn)
 	scanner.Split(bufio.ScanWords)
+	nums := make([]int, 4)
+	i := 0
+	var err error
 
-	for i := 0; i < 4; i++ {
-		var s string
-
-		if !scanner.Scan() {
-			break
-		}
-
-		s = string(scanner.Bytes())
-
+	for i = 0; i < 4 && scanner.Scan(); i++ {
+		s := scanner.Text()
 		if i%2 == 0 {
 			nums[i], err = strconv.Atoi(strings.TrimSpace(s))
-
 			if err != nil {
-				return chess.Move{}, err
+				return chess.Move{}, errors.New("Invalid input")
 			}
 		} else {
-			s := []byte(strings.TrimSpace(s))
-			nums[i] = int(s[0])
+			if len(s) == 1 {
+				nums[i] = int(([]byte(s))[0])
+			} else {
+				return chess.Move{}, errors.New("Invalid input")
+			}
 		}
 	}
-
 	return chess.NewMove(nums[0]-1, nums[1]-'a', nums[2]-1, nums[3]-'a'), nil
 }
 

@@ -34,10 +34,9 @@ func (cc CliCallback) FetchMove() (chess.Move, error) {
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Split(bufio.ScanWords)
 	nums := make([]int, 4)
-	i := 0
 	var err error
 
-	for i = 0; i < 4 && scanner.Scan(); i++ {
+	for i := 0; i < 4 && scanner.Scan(); i++ {
 		s := scanner.Text()
 		if i%2 == 0 {
 			nums[i], err = strconv.Atoi(strings.TrimSpace(s))

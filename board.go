@@ -186,6 +186,11 @@ func NewMove(i, j, k, l int) Move {
 	}
 }
 
+func (m Move) isEmpty() bool {
+	return m.pos1.x == 0 && m.pos1.y == 0 &&
+		m.pos2.x == 0 && m.pos2.y == 0
+}
+
 // Callback is the standard protocol can connect to the game
 type Callback interface {
 	ShowTurn(b *Board)
@@ -215,7 +220,9 @@ func (b *Board) AdvanceLooping(c Callback) {
 				break
 			}
 		}
-
+		if move.isEmpty() {
+			break
+		}
 		if b.Move(move.pos1, move.pos2) {
 			b.turn = b.turn%2 + 1
 			c.RenderBoard(b)

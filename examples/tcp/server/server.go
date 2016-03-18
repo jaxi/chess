@@ -57,6 +57,10 @@ func (tc TCPCallback) FetchMove() (chess.Move, error) {
 			}
 		}
 	}
+
+	if i == 0 {
+		return chess.Move{}, nil
+	}
 	return chess.NewMove(nums[0]-1, nums[1]-'a', nums[2]-1, nums[3]-'a'), nil
 }
 
@@ -70,11 +74,14 @@ func main() {
 
 	ln, _ := net.Listen("tcp", ":8081")
 
-	conn, _ := ln.Accept()
-	defer conn.Close()
-
 	b := chess.NewBoard()
-	tc := TCPCallback{conn: conn}
 
-	b.AdvanceLooping(tc)
+	for {
+		conn, _ := ln.Accept()
+		defer conn.Close()
+		tc := TCPCallback{conn: conn}
+
+		b.AdvanceLooping(tc)
+	}
+
 }

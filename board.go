@@ -207,7 +207,7 @@ func (b *Board) AdvanceLooping(players ...Player) int {
 		p.RenderBoard(b)
 	}
 
-	for i := 0; ; {
+	for i, cnt := 0, len(players); ; {
 		var move Move
 		var err error
 
@@ -231,7 +231,7 @@ func (b *Board) AdvanceLooping(players ...Player) int {
 		}
 		if b.Move(move.pos1, move.pos2) {
 			b.turn = b.turn%2 + 1
-			i = (i + 1) % 2
+			i = (i + 1) % cnt
 			for _, p := range players {
 				p.RenderBoard(b)
 			}

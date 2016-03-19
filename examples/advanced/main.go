@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -30,28 +29,29 @@ func (cc CliCallback) RenderBoard(b *chess.Board) {
 }
 
 // FetchMove returns the move from your STDIN
-func (cc CliCallback) FetchMove() (chess.Move, error) {
+func (cc CliCallback) FetchMove() (move chess.Move, err error) {
+	defer func() {
+		if p := recover(); p != nil {
+			err = fmt.Errorf("Invalid Input")
+		}
+	}()
+
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Split(bufio.ScanWords)
 	nums := make([]int, 4)
-	var err error
 
 	for i := 0; i < 4 && scanner.Scan(); i++ {
 		s := scanner.Text()
 		if i%2 == 0 {
 			nums[i], err = strconv.Atoi(strings.TrimSpace(s))
-			if err != nil {
-				return chess.Move{}, errors.New("Invalid input")
-			}
 		} else {
 			if len(s) == 1 {
 				nums[i] = int(([]byte(s))[0])
-			} else {
-				return chess.Move{}, errors.New("Invalid input")
 			}
 		}
 	}
-	return chess.NewMove(nums[0]-1, nums[1]-'a', nums[2]-1, nums[3]-'a'), nil
+	move = chess.NewMove(nums[0]-1, nums[1]-'a', nums[2]-1, nums[3]-'a')
+	return
 }
 
 // ErrorMessage shows the message about what's going wrong

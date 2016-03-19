@@ -59,7 +59,7 @@ func (tc TCPCallback) FetchMove() (chess.Move, error) {
 	}
 
 	if i == 0 {
-		return chess.Move{}, nil
+		return chess.NewMove(-1, -1, -1, -1), nil
 	}
 	return chess.NewMove(nums[0]-1, nums[1]-'a', nums[2]-1, nums[3]-'a'), nil
 }

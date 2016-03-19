@@ -93,7 +93,6 @@ func main() {
 		tc2 := TCPPlayer{conn: conns[1]}
 
 		idx := b.AdvanceLooping([]chess.Player{tc1, tc2})
-		fmt.Println(idx)
 		opened[idx] = false
 	}
 }

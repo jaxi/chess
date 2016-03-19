@@ -12,15 +12,15 @@ import (
 	"github.com/jaxi/chess"
 )
 
-// TCPCallback - The Implementation of TCP protocol for chess game
-type TCPCallback struct {
+// TCPPlayer - The Implementation of TCP protocol for chess game
+type TCPPlayer struct {
 	conn net.Conn
 	io.Reader
 	io.Writer
 }
 
 // ShowTurn displays the message about who is playing
-func (tc TCPCallback) ShowTurn(b *chess.Board) {
+func (tc TCPPlayer) ShowTurn(b *chess.Board) {
 	tw := map[chess.Side]string{
 		chess.WHITE: "White",
 		chess.BLACK: "Black",
@@ -30,12 +30,12 @@ func (tc TCPCallback) ShowTurn(b *chess.Board) {
 }
 
 // RenderBoard render the board in CLI
-func (tc TCPCallback) RenderBoard(b *chess.Board) {
+func (tc TCPPlayer) RenderBoard(b *chess.Board) {
 	tc.conn.Write([]byte(b.String()))
 }
 
 // FetchMove returns the move from your STDIN
-func (tc TCPCallback) FetchMove() (chess.Move, error) {
+func (tc TCPPlayer) FetchMove() (chess.Move, error) {
 	scanner := bufio.NewScanner(tc.conn)
 	scanner.Split(bufio.ScanWords)
 	nums := make([]int, 4)
@@ -65,7 +65,7 @@ func (tc TCPCallback) FetchMove() (chess.Move, error) {
 }
 
 // ErrorMessage shows the message about what's going wrong
-func (tc TCPCallback) ErrorMessage(b *chess.Board) {
+func (tc TCPPlayer) ErrorMessage(b *chess.Board) {
 	tc.conn.Write([]byte("Wait a minute. There's something wrong with your move!\n"))
 }
 
@@ -77,11 +77,16 @@ func main() {
 	b := chess.NewBoard()
 
 	for {
-		conn, _ := ln.Accept()
-		defer conn.Close()
-		tc := TCPCallback{conn: conn}
+		conn1, _ := ln.Accept()
+		defer conn1.Close()
 
-		b.AdvanceLooping(tc)
+		conn2, _ := ln.Accept()
+		defer conn2.Close()
+
+		tc1 := TCPPlayer{conn: conn1}
+		tc2 := TCPPlayer{conn: conn2}
+
+		b.AdvanceLooping([]chess.Player{tc1, tc2})
 	}
 
 }

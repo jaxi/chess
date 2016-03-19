@@ -186,13 +186,14 @@ func NewMove(i, j, k, l int) Move {
 	}
 }
 
+// Null tells Whether the Move doesn't make sense
 func (m Move) Null() bool {
 	return m.pos1.x == -1 && m.pos1.y == -1 &&
 		m.pos2.x == -1 && m.pos2.y == -1
 }
 
-// Callback is the standard protocol can connect to the game
-type Callback interface {
+// Player is the standard protocol can connect to the game
+type Player interface {
 	ShowTurn(b *Board)
 	RenderBoard(b *Board)
 	FetchMove() (Move, error)
@@ -200,22 +201,24 @@ type Callback interface {
 }
 
 // AdvanceLooping loop the gamve with more options
-func (b *Board) AdvanceLooping(c Callback) {
-	c.RenderBoard(b)
+func (b *Board) AdvanceLooping(players []Player) {
+	for _, p := range players {
+		p.RenderBoard(b)
+	}
 
-	for {
+	for i := 0; ; i = (i + 1) % 2 {
 		var move Move
 		var err error
 
 		for {
-			c.ShowTurn(b)
-			move, err = c.FetchMove()
+			players[i].ShowTurn(b)
+			move, err = players[i].FetchMove()
 			if err != nil {
 				if err == io.EOF {
 					os.Exit(0)
 				}
 				fmt.Println("read error:", err)
-				c.ErrorMessage(b)
+				players[i].ErrorMessage(b)
 			} else {
 				break
 			}
@@ -225,9 +228,11 @@ func (b *Board) AdvanceLooping(c Callback) {
 		}
 		if b.Move(move.pos1, move.pos2) {
 			b.turn = b.turn%2 + 1
-			c.RenderBoard(b)
+			for _, p := range players {
+				p.RenderBoard(b)
+			}
 		} else {
-			c.ErrorMessage(b)
+			players[i].ErrorMessage(b)
 		}
 	}
 }

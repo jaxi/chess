@@ -97,7 +97,7 @@ func main() {
 		tc1 := TCPPlayer{conn: conns[0], turn: chess.WHITE}
 		tc2 := TCPPlayer{conn: conns[1], turn: chess.BLACK}
 
-		idx := b.AdvanceLooping([]chess.Player{tc1, tc2})
+		idx := b.AdvanceLooping(tc1, tc2)
 		opened[idx] = false
 	}
 }

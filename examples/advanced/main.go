@@ -61,5 +61,5 @@ func (cc CliCallback) ErrorMessage(b *chess.Board) {
 
 func main() {
 	b := chess.NewBoard()
-	b.AdvanceLooping([]chess.Player{CliCallback{}})
+	b.AdvanceLooping(CliCallback{})
 }

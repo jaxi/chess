@@ -202,7 +202,7 @@ type Player interface {
 
 // AdvanceLooping loop the gamve with more options
 // returns the failed/disconnected player index
-func (b *Board) AdvanceLooping(players []Player) int {
+func (b *Board) AdvanceLooping(players ...Player) int {
 	for _, p := range players {
 		p.RenderBoard(b)
 	}

@@ -70,7 +70,7 @@ func main() {
 	termbox.SetInputMode(termbox.InputEsc)
 
 	go func() {
-		board.AdvanceLooping([]chess.Player{terminalUICallback{}})
+		board.AdvanceLooping(terminalUICallback{})
 	}()
 
 mainloop:

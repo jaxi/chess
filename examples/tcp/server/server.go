@@ -14,6 +14,7 @@ import (
 
 // TCPPlayer - The Implementation of TCP protocol for chess game
 type TCPPlayer struct {
+	turn chess.Side
 	conn net.Conn
 	io.Reader
 	io.Writer
@@ -26,7 +27,11 @@ func (tc TCPPlayer) ShowTurn(b *chess.Board) {
 		chess.BLACK: "Black",
 	}
 
-	tc.conn.Write([]byte(tw[b.Turn()] + "'s turn: "))
+	if tc.turn == b.Turn() {
+		tc.conn.Write([]byte(tw[b.Turn()] + "'s turn: "))
+	} else {
+		tc.conn.Write([]byte("Waiting for " + tw[b.Turn()] + "'s play.\n"))
+	}
 }
 
 // RenderBoard render the board in CLI
@@ -89,8 +94,8 @@ func main() {
 			}
 		}
 
-		tc1 := TCPPlayer{conn: conns[0]}
-		tc2 := TCPPlayer{conn: conns[1]}
+		tc1 := TCPPlayer{conn: conns[0], turn: chess.WHITE}
+		tc2 := TCPPlayer{conn: conns[1], turn: chess.BLACK}
 
 		idx := b.AdvanceLooping([]chess.Player{tc1, tc2})
 		opened[idx] = false

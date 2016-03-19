@@ -212,7 +212,9 @@ func (b *Board) AdvanceLooping(players []Player) int {
 		var err error
 
 		for {
-			players[i].ShowTurn(b)
+			for _, p := range players {
+				p.ShowTurn(b)
+			}
 			move, err = players[i].FetchMove()
 			if err != nil {
 				if err == io.EOF {

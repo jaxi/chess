@@ -201,12 +201,13 @@ type Player interface {
 }
 
 // AdvanceLooping loop the gamve with more options
-func (b *Board) AdvanceLooping(players []Player) {
+// returns the failed/disconnected player index
+func (b *Board) AdvanceLooping(players []Player) int {
 	for _, p := range players {
 		p.RenderBoard(b)
 	}
 
-	for i := 0; ; i = (i + 1) % 2 {
+	for i := 0; ; {
 		var move Move
 		var err error
 
@@ -224,10 +225,11 @@ func (b *Board) AdvanceLooping(players []Player) {
 			}
 		}
 		if move.Null() {
-			break
+			return i
 		}
 		if b.Move(move.pos1, move.pos2) {
 			b.turn = b.turn%2 + 1
+			i = (i + 1) % 2
 			for _, p := range players {
 				p.RenderBoard(b)
 			}

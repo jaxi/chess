@@ -76,17 +76,24 @@ func main() {
 
 	b := chess.NewBoard()
 
+	opened := make([]bool, 2)
+	conns := make([]net.Conn, 2)
+
 	for {
-		conn1, _ := ln.Accept()
-		defer conn1.Close()
 
-		conn2, _ := ln.Accept()
-		defer conn2.Close()
+		for i := range conns {
+			if opened[i] == false {
+				conns[i], _ = ln.Accept()
+				opened[i] = true
+				defer conns[i].Close()
+			}
+		}
 
-		tc1 := TCPPlayer{conn: conn1}
-		tc2 := TCPPlayer{conn: conn2}
+		tc1 := TCPPlayer{conn: conns[0]}
+		tc2 := TCPPlayer{conn: conns[1]}
 
-		b.AdvanceLooping([]chess.Player{tc1, tc2})
+		idx := b.AdvanceLooping([]chess.Player{tc1, tc2})
+		fmt.Println(idx)
+		opened[idx] = false
 	}
-
 }
